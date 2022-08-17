@@ -1,69 +1,34 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
+
+data = pd.read_csv('/Users/karanbuntval/PycharmProjects/FirstNeuralNetwork1/Data/train.csv')
+data = np.array(data)
+labels = data[:, 0]
+data = (np.delete(data, obj=0, axis=1)).T
+m, n = data.shape
+
+print(labels)
+print(m, n)
+
+np.random.seed(42)
+weights = (np.random.rand(784, 10) - 0.5).T  # Initial vector of weights
+bias = np.random.rand(10, 1) - 0.5
+alpha = 0.05  # learning rate
+
+
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1/(1 + np.exp(-x))
+
 
 def sigmoid_derivative(x):
-    return np.exp(-x) / ((1 + np.exp(-x)) ** 2)
+    return sigmoid(x) * (1-sigmoid(x))
 
-def forward_propagation(W1, W2):
-    a1 = np.dot(X, W1) + b1
-    z1 = sigmoid(a1)
-    a2 = np.dot(z1, W2) + b2
-    y_pred = sigmoid(a2)
-    return a1, z1, a2, y_pred
 
-def compute_cost(y_pred):
-    J = 0.5 * sum((y - y_pred) ** 2)
-    return J
+inputs = data
+XW = weights.dot(inputs) + bias
+z = sigmoid(XW)
+error = z - labels
 
-def backward_propagation(y_pred, z2, a1, z1):
-    delta2 = np.multiply(-(y - y_pred), sigmoid_derivative(z2))
-    dJ_dW2 = np.dot(a1.T, delta2)
-    delta1 = np.dot(delta2, W2.T) * sigmoid_derivative(z1)
-    dJ_dW1 = np.dot(X.T, delta1)
-    return dJ_dW1, dJ_dW2
-
-X = np.array([[0, 0, 0],
-              [0, 0, 1],
-              [0, 1, 0],
-              [0, 1, 1],
-              [1, 0, 0],
-              [1, 0, 1],
-              [1, 1, 0],
-              [1, 1, 1]])
-
-y = np.array([[0], [1], [0], [1], [0], [1], [1], [1]])
-
-input_no = 3
-output_no = 1
-hidden_no = 4
-
-W1 = np.random.randn(input_no, hidden_no)
-b1 = np.ones([1, hidden_no])
-
-W2 = np.random.randn(hidden_no, output_no)
-b2 = np.ones([1, output_no])
-
-alpha = 0.05
-num_iterations = 4000
-
-cost =[]
-
-for i in range(num_iterations):
-    z1, a1, z2, y_pred = forward_propagation(W1, W2)
-    dJ_dW1, dJ_dW2 = backward_propagation(y_pred, z2, a1, z1)
-
-    W1 = W1 - (alpha * dJ_dW1)
-    W2 = W2 - (alpha * dJ_dW2)
-
-    c = compute_cost(y_pred)
-    cost.append(c)
-
-plt.grid()
-plt.plot(range(num_iterations), cost)
-plt.title('Loss vs. Iterations')
-plt.xlabel('Number of Iterations')
-plt.ylabel('Loss')
-plt.show()
+print(z)
