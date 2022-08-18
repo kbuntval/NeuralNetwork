@@ -5,30 +5,41 @@ import matplotlib.pyplot as plt
 
 data = pd.read_csv('/Users/karanbuntval/PycharmProjects/FirstNeuralNetwork1/Data/train.csv')
 data = np.array(data)
-labels = data[:, 0]
-data = (np.delete(data, obj=0, axis=1)).T
+Y_label = data[:, 0]  # Labels within dataset (42000 * 1)
+A1 = (np.delete(data, obj=0, axis=1)).T  # Pixel values w/o corresponding labels (784 * 42000)
 m, n = data.shape
 
-print(labels)
-print(m, n)
-
-np.random.seed(42)
-weights = (np.random.rand(784, 10) - 0.5).T  # Initial vector of weights
-bias = np.random.rand(10, 1) - 0.5
-alpha = 0.05  # learning rate
-
-
-def sigmoid(x):
-    return 1/(1 + np.exp(-x))
+def params():
+    np.random.seed(1)
+    w1 = (np.random.rand(784, 10) - 0.5).T  # Initial vector of weights (10 * 784)
+    b1 = np.random.rand(10, 1) - 0.5
+    w2 = (np.random.rand(10, 10) - 0.5)
+    b2 = np.random.ran(10, 1) - 0.5
+    alpha = 0.05  # learning rate
+    return w1, b1, w2, b2, alpha
 
 
-def sigmoid_derivative(x):
-    return sigmoid(x) * (1-sigmoid(x))
+def relu(x):
+    return np.maximum(0, x)
 
 
-inputs = data
-XW = weights.dot(inputs) + bias
-z = sigmoid(XW)
-error = z - labels
+def softmax(x):
+    return np.exp(x)/sum(np.exp(x))
 
-print(z)
+
+def forward_prop(inp, w1, b1, w2, b2):
+    Z1 = w1.dot(inp) + b1
+    A1 = relu(Z1)
+    Z2 = w2.dot(A1) + b2
+    A2 = softmax(Z2)
+    return Z1, A1, Z2, A2
+
+
+def one_hot(Y):
+    one_hot_Y = np.zeros((Y.size, Y.max() + 1))
+    one_hot_Y[np.arange(Y.size), Y] = 1
+    one_hot_Y = one_hot_Y.T
+    return one_hot_Y
+
+def backward_prop()
+
